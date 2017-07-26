@@ -9,15 +9,8 @@ def graham_scan(points):
         hull.extend(points)
         return hull
 
-    min_y_pos = 0
-    min_y = points[0].y
-
-    for i in range(1, n):
-        if points[i].y < min_y:
-            min_y = points[i].y
-            min_y_pos = i
-
-    points[0], points[min_y_pos] = points[min_y_pos], points[0]
+    first = leftmost_and_lowest(points)
+    points[0], points[first] = points[first], points[0]
 
     pivot = points[0]
 
@@ -48,3 +41,55 @@ def graham_scan(points):
                 break
 
     return hull
+
+
+def jarvis_march(points):
+    hull = []
+
+    n = len(points)
+    if n <= 3:
+        hull.extend(points)
+        return hull
+
+    first = leftmost_and_lowest(points)
+    visited = [first]
+    hull.append(points[first])
+    prev = first
+
+    while True:
+        cur = first
+        for i in range(0, n):
+            if i not in visited:
+                r = geo.ccw(points[prev], points[i], points[cur])
+                if r > 0:
+                    cur = i
+                elif r == 0:
+                    d1 = geo.distance2(points[prev], points[i])
+                    d2 = geo.distance2(points[prev], points[cur])
+                    if d1 > d2:
+                        cur = i
+
+        if cur == first:
+            break
+
+        visited.append(cur)
+        hull.append(points[cur])
+        prev = cur
+
+    return hull
+
+
+def leftmost_and_lowest(points):
+    def comp(a, b):
+        if a.y > b.y:
+            return 1
+
+        if a.y == b.y:
+            if a.x < b.x:
+                return -1
+            else:
+                return 1
+
+        return -1
+
+    return points.index(min(points, key=functools.cmp_to_key(comp)))

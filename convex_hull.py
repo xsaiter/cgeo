@@ -15,7 +15,7 @@ def graham_scan(points):
     pivot = points[0]
 
     def angle_cmp(x, y):
-        r = geo.ccw(pivot, x, y)
+        r = geo.cross_product(pivot, x, y)
         if r > 0:
             return 1
         if r < 0:
@@ -34,7 +34,7 @@ def graham_scan(points):
             hull.append(next_top)
             hull.append(top)
 
-            if geo.ccw(next_top, top, points[i]) == -1:
+            if geo.cross_product(next_top, top, points[i]) < 0:
                 hull.pop()
             else:
                 hull.append(points[i])
@@ -60,7 +60,7 @@ def jarvis_march(points):
         cur = first
         for i in range(0, n):
             if i not in visited:
-                r = geo.ccw(points[prev], points[i], points[cur])
+                r = geo.cross_product(points[prev], points[i], points[cur])
                 if r > 0:
                     cur = i
                 elif r == 0:

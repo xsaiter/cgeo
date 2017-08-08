@@ -20,7 +20,7 @@ def graham_scan(points):
             return 1
         if r < 0:
             return -1
-        return 1 if geo.distance2(pivot, x) > geo.distance2(pivot, y) else -1
+        return 1 if geo.Point.distance2(pivot, x) > geo.Point.distance2(pivot, y) else -1
 
     points = points[:1] + sorted(points[1:], key=functools.cmp_to_key(angle_cmp), reverse=True)
 
@@ -64,8 +64,8 @@ def jarvis_march(points):
                 if r > 0:
                     cur = i
                 elif r == 0:
-                    d1 = geo.distance2(points[prev], points[i])
-                    d2 = geo.distance2(points[prev], points[cur])
+                    d1 = geo.Point.distance2(points[prev], points[i])
+                    d2 = geo.Point.distance2(points[prev], points[cur])
                     if d1 > d2:
                         cur = i
 

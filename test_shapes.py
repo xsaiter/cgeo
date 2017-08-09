@@ -33,6 +33,20 @@ class TestShapes(unittest.TestCase):
 
         self.assertEqual(actual, 34)
 
+    def test_segments_intersect(self):
+        seg1 = shapes.Segment(geo.Point(1, 1), geo.Point(4, 4))
+        seg2 = shapes.Segment(geo.Point(3, 2), geo.Point(5, 2))
+        actual = shapes.segments_intersect(seg1, seg2)
+        self.assertEquals(actual, False)
+
+        seg2 = shapes.Segment(geo.Point(3, 2), geo.Point(1, 3))
+        actual = shapes.segments_intersect(seg1, seg2)
+        self.assertEquals(actual, True)
+
+        seg2 = shapes.Segment(geo.Point(4, 4), geo.Point(5, 2))
+        actual = shapes.segments_intersect(seg1, seg2)
+        self.assertEquals(actual, True)
+
 
 if __name__ == '__main__':
     unittest.main()

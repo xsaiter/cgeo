@@ -1,4 +1,39 @@
 import geo
+from math import sqrt as m_sqrt
+
+
+class Rectangle(object):
+    __slots__ = ("v1", "v2")
+
+    def __init__(self, v1, v2):
+        """
+        :param v1: bottom left point
+        :param v2: top right point
+        """
+        self.v1 = v1
+        self.v2 = v2
+
+
+class Segment(object):
+    __slots__ = ("p1", "p2")
+
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+    def distance2(self):
+        return geo.Point.distance2(self.p1, self.p2)
+
+    def distance(self):
+        return m_sqrt(self.distance2())
+
+
+class Polygon(object):
+    def __init__(self, points):
+        self.points = points
+
+    def get_area(self):
+        return get_area_of_polygon(self.points)
 
 
 def get_area_of_triangle(p1, p2, p3):
@@ -17,18 +52,6 @@ def get_area_of_polygon(points):
         res += geo.cross_product(pivot, points[i], points[i + 1]) / 2
 
     return abs(res)
-
-
-class Rectangle(object):
-    __slots__ = ("v1", "v2")
-
-    def __init__(self, v1, v2):
-        """
-        :param v1: bottom left point
-        :param v2: top right point
-        """
-        self.v1 = v1
-        self.v2 = v2
 
 
 def get_segments_count(items):
@@ -80,3 +103,31 @@ def get_total_perimeter_of_rectangles(rectangles):
         return r.v2.y
 
     return perimeter_one(y1, y2, x1, x2) + perimeter_one(x1, x2, y1, y2)
+
+
+def segments_intersect(s1, s2):
+    r1 = geo.cross_product(s1.p1, s1.p2, s2.p1)
+    r2 = geo.cross_product(s1.p1, s1.p2, s2.p2)
+
+    r3 = geo.cross_product(s2.p1, s2.p2, s1.p1)
+    r4 = geo.cross_product(s2.p1, s2.p2, s1.p2)
+
+    if ((r1 > 0 and r2 < 0) or (r1 < 0 and r2 > 0)) and ((r3 > 0 and r4 < 0) or (r3 < 0 and r4 > 0)):
+        return True
+
+    def is_point_on_segment(s, p):
+        return max(s.p1.x, s.p2.x) >= p.x >= min(s.p1.x, s.p2.x) and max(s.p1.y, s.p2.y) >= p.y >= min(s.p1.y, s.p2.y)
+
+    if r1 == 0:
+        return is_point_on_segment(s1, s2.p1)
+
+    if r2 == 0:
+        return is_point_on_segment(s1, s2.p2)
+
+    if r3 == 0:
+        return is_point_on_segment(s2, s1.p1)
+
+    if r4 == 0:
+        return is_point_on_segment(s2, s1.p2)
+
+    return False

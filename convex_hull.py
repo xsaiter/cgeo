@@ -84,12 +84,9 @@ def leftmost_and_lowest(points):
         if a.y > b.y:
             return 1
 
-        if a.y == b.y:
-            if a.x < b.x:
-                return -1
-            else:
-                return 1
+        if a.y < b.y:
+            return -1
 
-        return -1
+        return -1 if a.x < b.x else 1
 
     return points.index(min(points, key=functools.cmp_to_key(comp)))

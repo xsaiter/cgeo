@@ -15,11 +15,11 @@ def get_polygon():
 
 
 class TestShapes(unittest.TestCase):
-    def test_geo_area_of_polygon(self):
+    def test_get_area_of_polygon(self):
         area = shapes.get_area_of_polygon(get_polygon())
         self.assertEqual(area, 15)
 
-    def test_geo_area_of_triangle(self):
+    def test_get_area_of_triangle(self):
         area = shapes.get_area_of_triangle(geo.Point(0, 0), geo.Point(5, 0), geo.Point(2, 10))
         self.assertEqual(area, 25)
 
@@ -46,6 +46,13 @@ class TestShapes(unittest.TestCase):
         seg2 = shapes.Segment(geo.Point(4, 4), geo.Point(5, 2))
         actual = shapes.segments_intersect(seg1, seg2)
         self.assertEquals(actual, True)
+
+    def test_get_area_of_intersection_rectangles(self):
+        r1 = shapes.Rectangle(geo.Point(0, 0), geo.Point(5, 3))
+        r2 = shapes.Rectangle(geo.Point(3, 1), geo.Point(8, 4))
+
+        actual = shapes.get_area_of_intersection_rectangles([r1, r2])
+        self.assertEquals(actual, 4)
 
 
 if __name__ == '__main__':

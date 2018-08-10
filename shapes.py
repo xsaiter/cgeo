@@ -13,6 +13,22 @@ class Rectangle(object):
         self.v1 = v1
         self.v2 = v2
 
+    @staticmethod
+    def x1(r):
+        return r.v1.x
+
+    @staticmethod
+    def x2(r):
+        return r.v2.x
+
+    @staticmethod
+    def y1(r):
+        return r.v1.y
+
+    @staticmethod
+    def y2(r):
+        return r.v2.y
+
 
 class Segment(object):
     __slots__ = ("p1", "p2")
@@ -26,6 +42,54 @@ class Segment(object):
 
     def distance(self):
         return m_sqrt(self.distance2())
+
+
+class Range(object):
+    __slots__ = ("l", "r")
+
+    def __init__(self, l, r):
+        self.l = l
+        self.r = r
+
+
+def intersect_ranges(s1, s2):
+    if s1.l <= s2.l <= s1.r:
+        return True, Range(s2.l, min(s1.r, s2.r))
+    if s2.l <= s1.l <= s2.r:
+        return True, Range(s1.l, min(s1.r, s2.r))
+    return False, None
+
+
+def get_area_of_intersection_rectangles(rects):
+    n = len(rects)
+    if n == 0:
+        return 0
+
+    if n == 1:
+        return (rects[0].v1.x - rects[0].v2.x)*(rects[0].v1.y - rects[0].v2.y)
+
+    def get_seg(fn1, fn2):
+        res = Range(fn1(rects[0]), fn2(rects[0]))
+        for i in range(1, n):
+            cur = Range(fn1(rects[i]), fn2(rects[i]))
+            t = intersect_ranges(res, cur)
+            if t[0]:
+                res = t[1]
+            else:
+                return False, None
+        return True, res
+
+    seg = get_seg(Rectangle.x1, Rectangle.x2)
+    if not seg[0]:
+        return 0
+    x = seg[1]
+
+    seg = get_seg(Rectangle.y1, Rectangle.y2)
+    if not seg[0]:
+        return 0
+    y = seg[1]
+
+    return (x.r - x.l)*(y.r - y.l)
 
 
 class Polygon(object):
@@ -90,19 +154,7 @@ def get_total_perimeter_of_rectangles(rectangles):
 
         return res
 
-    def x1(r):
-        return r.v1.x
-
-    def x2(r):
-        return r.v2.x
-
-    def y1(r):
-        return r.v1.y
-
-    def y2(r):
-        return r.v2.y
-
-    return perimeter_one(y1, y2, x1, x2) + perimeter_one(x1, x2, y1, y2)
+    return perimeter_one(Rectangle.y1, Rectangle.y2, Rectangle.x1, Rectangle.x2) + perimeter_one(Rectangle.x1, Rectangle.x2, Rectangle.y1, Rectangle.y2)
 
 
 def segments_intersect(s1, s2):
